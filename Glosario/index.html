@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glosario de Seguridad Vial y Percepción</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- VARIABLES DE COLOR ACTUALIZADAS --- */
+        :root {
+            --primary-brand: #27728F;
+            --bg-light: #ececec;
+            --text-dark: #333333;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-image: radial-gradient(#d0d0d0 1px, transparent 1px);
+            background-size: 10px 10px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .glossary-widget {
+            width: 100%;
+            max-width: 900px;
+            background: transparent;
+            position: relative; 
+        }
+
+        .instruction-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .instruction-badge {
+            background-color: var(--primary-brand);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse-attention 2s infinite;
+        }
+
+        @keyframes pulse-attention {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(39, 114, 143, 0.4); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(39, 114, 143, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(39, 114, 143, 0); }
+        }
+
+        .glossary-header {
+            background-color: var(--primary-brand);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .glossary-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .glossary-body {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start; 
+        }
+
+        .tabs-container {
+            display: flex;
+            flex-direction: column;
+            width: 140px;
+            flex-shrink: 0;
+            background-color: var(--primary-brand);
+            border-radius: 15px;
+            padding: 10px 0;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px; 
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--white);
+            border: none;
+            padding: 15px 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            outline: none;
+        }
+
+        .tab-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .tab-btn.active {
+            background-color: var(--bg-light);
+            color: var(--primary-brand);
+            border-radius: 5px 0 0 5px;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            background-color: var(--bg-light);
+            border-radius: 15px;
+            padding: 40px;
+            min-height: 450px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .definition-item {
+            margin-bottom: 30px;
+            padding-left: 20px;
+            border-left: 5px solid var(--primary-brand);
+        }
+
+        .definition-item h3 {
+            color: var(--primary-brand);
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .definition-item p {
+            color: var(--text-dark);
+            line-height: 1.6;
+            margin: 0;
+            text-align: left;
+        }
+
+        .hidden { display: none; }
+
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in .definition-item {
+            animation: slideUpFade 0.5s ease-out forwards;
+            opacity: 0; 
+        }
+
+        .animate-in .definition-item:nth-child(n) { animation-delay: 0.1s; }
+
+        @media (max-width: 768px) {
+            .glossary-body { flex-direction: column; }
+            .tabs-container { width: 100%; flex-direction: row; position: static; }
+            .tab-btn { flex: 1; border-bottom: none; border-right: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
+            .tab-btn.active { border-radius: 10px 10px 0 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="glossary-widget">
+    <div class="instruction-wrapper">
+        <div class="instruction-badge">
+            <span>👆</span> Haga Clic para ampliar la información
+        </div>
+    </div>
+
+    <div class="glossary-header">
+        <h1>Glosario de la unidad</h1>
+    </div>
+
+    <div class="glossary-body">
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="filterContent('A-I', this)">A – I</button>
+            <button class="tab-btn" onclick="filterContent('J-Q', this)">J – Q</button>
+            <button class="tab-btn" onclick="filterContent('R-Z', this)">R – Z</button>
+        </div>
+
+        <div class="content-area">
+            <!-- GRUPO A - I -->
+            <div class="content-group animate-in" id="group-A-I">
+                <div class="definition-item">
+                    <h3>Adaptación sensorial</h3>
+                    <p>Disminución de la sensibilidad ante estímulos constantes. Ejemplo: la vista ajustándose a la luz brillante al salir de un túnel.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Atención y concentración</h3>
+                    <p>Capacidad para mantenerse enfocado en tareas específicas, ignorando distracciones internas o externas.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Campo visual</h3>
+                    <p>Extensión del área que una persona puede percibir sin mover los ojos, incluyendo visión central y periférica.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Capacidad de percepción visual</h3>
+                    <p>Habilidad para procesar estímulos visuales en el entorno, como señales y obstáculos en el tráfico.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Capacidad de reacción</h3>
+                    <p>Rapidez y adecuación al responder a estímulos en el tráfico, como frenar ante un imprevisto.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Cognición de peligros</h3>
+                    <p>Proceso de identificar, evaluar y evitar riesgos en el entorno vial.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Desempeño bajo demandas</h3>
+                    <p>Capacidad para mantener el control en situaciones de alta presión o carga mental en el tráfico.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Estímulo distal</h3>
+                    <p>Fuente externa de energía sensorial, como una señal de tránsito visible o un sonido.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Estímulo proximal</h3>
+                    <p>Energía que interactúa con los órganos sensoriales, transformándose en señales nerviosas para el cerebro.</p>
+                </div>
+            </div>
+
+            <!-- GRUPO J - Q -->
+            <div class="content-group hidden" id="group-J-Q">
+                <div class="definition-item">
+                    <h3>Mirar, pero no ver</h3>
+                    <p>Fenómeno donde la persona fija la vista en un objeto, pero no lo procesa conscientemente debido a distracciones.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Percepción de la distancia</h3>
+                    <p>Habilidad para estimar la proximidad entre objetos usando pistas visuales, como tamaño o superposición.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Percepción de la velocidad</h3>
+                    <p>Estimación subjetiva de la velocidad de un objeto en movimiento, influenciada por contraste, luz o entorno.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Psicofísica</h3>
+                    <p>Relación entre la intensidad de los estímulos físicos (como luz o sonido) y las experiencias sensoriales generadas.</p>
+                </div>
+            </div>
+
+            <!-- GRUPO R - Z -->
+            <div class="content-group hidden" id="group-R-Z">
+                <div class="definition-item">
+                    <h3>Resistencia</h3>
+                    <p>Capacidad para mantener el desempeño adecuado, incluso bajo condiciones de fatiga o estrés prolongado.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Selección del flujo de información</h3>
+                    <p>Proceso por el cual el cerebro prioriza estímulos relevantes en el tráfico, ignorando lo innecesario.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Sistema seguro</h3>
+                    <p>Enfoque integral que busca minimizar accidentes mediante infraestructura segura, normativas y tecnología avanzada.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Umbral absoluto</h3>
+                    <p>Cantidad mínima de energía necesaria para que un estímulo sea detectado por los sentidos.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Visión central</h3>
+                    <p>Parte del campo visual responsable de percibir detalles en el punto de enfoque.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Visión de túnel</h3>
+                    <p>Reducción del campo visual en situaciones de alta velocidad o estrés, limitando la percepción a la parte central.</p>
+                </div>
+                <div class="definition-item">
+                    <h3>Visión periférica</h3>
+                    <p>Habilidad para detectar movimientos y cambios fuera del centro del campo visual.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterContent(groupId, btnElement) {
+        const groups = document.querySelectorAll('.content-group');
+        groups.forEach(group => {
+            group.classList.add('hidden');
+            group.classList.remove('animate-in');
+        });
+
+        const selectedGroup = document.getElementById('group-' + groupId);
+        if (selectedGroup) {
+            selectedGroup.classList.remove('hidden');
+            void selectedGroup.offsetWidth; 
+            selectedGroup.classList.add('animate-in');
+        }
+
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+</script>
+
+</body>
+</html>

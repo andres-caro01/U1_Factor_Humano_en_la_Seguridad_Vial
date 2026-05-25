@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo Interactivo: Factores Humanos en Seguridad Vial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        :root {
+            --primary: #27728F;
+            --primary-dark: #1C546B;
+            --primary-light: #EBF1F4;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: 17px;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f9;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #main-container {
+            width: 95%;
+            max-width: 1000px;
+            height: 870px; 
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(39, 114, 143, 0.2);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2.5rem 3.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) #f1f1f1;
+        }
+
+        .text-custom { color: var(--primary); }
+        .bg-custom { background-color: var(--primary); }
+
+        .btn-action {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 3.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            display: inline-block;
+        }
+        .btn-action:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(39, 114, 143, 0.3);
+        }
+
+        .option-card {
+            transition: all 0.2s ease;
+            border: 2px solid #f1f5f9;
+            cursor: pointer;
+        }
+        
+        .option-card.selected {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .option-card.locked { pointer-events: none; }
+
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            min-height: 65px;
+            transition: all 0.3s;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+        .drop-zone.active { border-color: var(--primary); background: var(--primary-light); }
+        
+        .drag-item {
+            background: white;
+            border: 2px solid var(--primary);
+            padding: 8px 14px;
+            border-radius: 10px;
+            cursor: grab;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 4px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            color: var(--primary);
+            line-height: 1.3;
+        }
+
+        .circle-bar { 
+            fill: none; 
+            stroke: var(--primary); 
+            stroke-width: 10; 
+            stroke-linecap: round; 
+            transition: stroke-dashoffset 1.5s ease-out;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="main-container">
+        
+        <div id="screen-start" class="scroll-content flex flex-col items-center justify-center text-center animate__animated animate__fadeIn">
+            <h1 class="text-4xl font-bold text-custom mb-4 leading-tight">Ejercicios de Repaso</h1>
+            <p class="text-2xl mb-4 text-slate-600 font-semibold">Unidad 1: Factores Humanos en la Seguridad Vial</p>
+            <p class="mb-10 max-w-2xl text-slate-500 text-lg">Evaluación interactiva sobre procesos cognitivos, percepción, atención, distracción y modelos de gestión del estrés en el comportamiento vial.</p>
+            <button onclick="startQuiz()" class="btn-action text-xl shadow-lg">INICIAR REPASO</button>
+        </div>
+
+        <div id="screen-quiz" class="hidden flex flex-col h-full">
+            <div class="px-14 pt-8 flex justify-between items-center bg-white z-10">
+                <span id="q-number" class="font-bold text-custom text-sm tracking-widest uppercase"></span>
+                <div class="w-48 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="progress-fill" class="h-full bg-custom transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="scroll-content" id="quiz-body">
+                <p id="q-instruction" class="text-custom font-bold italic mb-2 text-base"></p>
+                <div id="case-box" class="hidden mb-4 p-4 bg-amber-50 border-l-4 border-amber-500 text-slate-700 text-base rounded-r-xl"></div>
+                <h2 id="q-text" class="text-lg font-semibold mb-6 leading-snug text-slate-800 border-l-4 border-[#27728F] pl-4 py-1 bg-slate-50"></h2>
+
+                <div id="options-container" class="space-y-3"></div>
+
+                <div id="association-container" class="hidden">
+                    <div class="mb-4 p-4 bg-slate-100 rounded-2xl">
+                        <p class="text-xs font-bold mb-2 uppercase text-slate-500">Elementos disponibles para arrastrar:</p>
+                        <div id="drag-bank" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    <div class="max-h-[350px] overflow-y-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full border-collapse text-base">
+                            <thead class="sticky top-0 bg-slate-50">
+                                <tr class="text-left">
+                                    <th id="th-col1" class="p-4 border-b text-sm font-bold text-slate-600 w-1/2">Premisa / Concepto</th>
+                                    <th id="th-col2" class="p-4 border-b text-sm font-bold text-slate-600 w-1/2">Relación Correcta</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="feedback-box" class="hidden mt-6 p-5 rounded-2xl border-2 animate__animated animate__fadeInUp text-base">
+                    <p id="feedback-title" class="font-bold text-lg mb-1"></p>
+                    <div id="feedback-body" class="leading-relaxed text-slate-700"></div>
+                    <button id="btn-continue" onclick="nextStep()" class="mt-4 bg-slate-800 text-white px-8 py-2 rounded-xl hover:bg-black transition-all font-bold text-sm">Continuar</button>
+                </div>
+
+                <button id="btn-validate" onclick="validateAnswer()" class="btn-action w-full mt-6 shadow-xl text-lg">Validar Respuesta</button>
+            </div>
+        </div>
+
+        <div id="screen-results" class="hidden scroll-content flex flex-col items-center justify-center text-center">
+            <h2 class="text-4xl font-bold mb-2 text-custom">Repaso Completado</h2>
+            <div class="relative flex items-center justify-center my-4">
+                <svg class="w-56 h-56 -rotate-90">
+                    <circle cx="112" cy="112" r="95" stroke="#f1f5f9" stroke-width="10" fill="none"></circle>
+                    <circle id="final-circle" cx="112" cy="112" r="95" class="circle-bar" stroke-dasharray="596" stroke-dashoffset="596"></circle>
+                </svg>
+                <div class="absolute text-5xl font-black text-slate-800"><span id="result-percent">0</span>%</div>
+            </div>
+            <p id="result-score" class="text-xl font-bold mb-4 text-slate-700"></p>
+            <div id="result-msg" class="max-w-2xl mb-8 p-5 bg-slate-50 rounded-2xl italic text-slate-600 text-base"></div>
+            <button onclick="location.reload()" class="btn-action">Reiniciar Repaso</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                type: "ms",
+                instruction: "Seleccione la respuesta correcta",
+                case: "Caso: Suponga que, en una ciudad intermedia de Colombia, un motociclista ignora un semáforo en rojo y colisiona con un peatón.",
+                question: "1. En el caso del motociclista que ignora el semáforo en rojo, ¿cuál de los siguientes factores humanos explica principalmente su decisión de desobedecer la norma?",
+                options: [
+                    {t: "a) Percepción errónea del riesgo y habituación a conductas inseguras.", c: true},
+                    {t: "b) Deficiencia en la sincronización de los semáforos viales.", c: false},
+                    {t: "c) Carencia de señalización vertical en la intersección.", c: false},
+                    {t: "d) Fallas mecánicas en el sistema de frenos del vehículo.", c: false}
+                ],
+                feedback: "La desobediencia al semáforo suele asociarse a fallas cognitivas como distracción o subestimación del riesgo, lo que lleva a decisiones inseguras pese a la presencia del semáforo."
+            },
+            {
+                type: "ms",
+                instruction: "Seleccione la respuesta correcta",
+                question: "2. Según los datos de la Agencia Nacional de Seguridad Vial, los tres grupos más vulnerables en la siniestralidad vial son:",
+                options: [
+                    {t: "a) Automovilistas, peatones y ciclistas.", c: false},
+                    {t: "b) Motociclistas, peatones y ciclistas.", c: true},
+                    {t: "c) Conductores de buses, ciclistas y peatones.", c: false},
+                    {t: "d) Motociclistas, automovilistas y peatones.", c: false}
+                ],
+                feedback: "Motociclistas, peatones y ciclistas son los actores más vulnerables en la vía, ya que presentan mayor exposición al riesgo y menor protección física, lo que incrementa la probabilidad de lesiones graves o fatales en siniestros viales."
+            },
+            {
+                type: "vf",
+                instruction: "Seleccione Verdadero o Falso",
+                question: "3. El exceso de velocidad y la desobediencia a señales de tránsito son causas probables en más del 70% de los siniestros en Colombia.",
+                options: [{t: "Verdadero", c: true}, {t: "Falso", c: false}],
+                feedback: "El exceso de velocidad (44,29%) y la desobediencia a señales (31,67%) suman más del 70% de las causas probables de siniestros, evidenciando su alta incidencia en la ocurrencia y gravedad de los eventos viales en Colombia de acuerdo con el observatorio de la Agencia Nacional de Seguridad Vial."
+            }
+        ];
+
+        let currentIdx = 0;
+        let score = 0;
+        let totalPossible = 3; // En este bloque específico del prompt
+
+        function startQuiz() {
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = quizData[currentIdx];
+            document.getElementById('q-number').innerText = `PREGUNTA ${currentIdx + 1}/${quizData.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentIdx + 1)/quizData.length)*100}%`;
+            document.getElementById('q-instruction').innerText = q.instruction;
+            document.getElementById('q-text').innerText = q.question;
+            document.getElementById('feedback-box').classList.add('hidden');
+            document.getElementById('btn-validate').classList.remove('hidden');
+            
+            const caseBox = document.getElementById('case-box');
+            if (q.case) {
+                caseBox.innerText = q.case;
+                caseBox.classList.remove('hidden');
+            } else {
+                caseBox.classList.add('hidden');
+            }
+
+            const optContainer = document.getElementById('options-container');
+            const tableContainer = document.getElementById('association-container');
+            
+            optContainer.innerHTML = '';
+            tableContainer.classList.add('hidden');
+            optContainer.classList.remove('hidden');
+
+            q.options.forEach((opt, i) => {
+                const d = document.createElement('div');
+                d.className = "option-card flex items-center p-4 rounded-xl mb-2 text-base";
+                d.innerHTML = `
+                    <input type="radio" name="ans" id="o${i}" value="${i}" class="w-5 h-5 accent-[#27728F]">
+                    <label for="o${i}" class="ml-4 w-full cursor-pointer font-medium text-slate-700">${opt.t}</label>
+                `;
+                d.onclick = () => {
+                    document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
+                    d.classList.add('selected');
+                    d.querySelector('input').checked = true;
+                };
+                optContainer.appendChild(d);
+            });
+        }
+
+        function validateAnswer() {
+            const q = quizData[currentIdx];
+            const sel = document.querySelector('input[name="ans"]:checked');
+            if (!sel) { alert("Por favor, seleccione una opción."); return; }
+            
+            let isCorrect = q.options[sel.value].c;
+            if (isCorrect) score++;
+            document.querySelectorAll('.option-card').forEach(el => el.classList.add('locked'));
+            
+            const fBox = document.getElementById('feedback-box');
+            fBox.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+            document.getElementById('btn-validate').classList.add('hidden');
+
+            const fTitle = document.getElementById('feedback-title');
+            if (isCorrect) {
+                fTitle.innerText = "¡Correcto!";
+                fTitle.className = "font-bold text-lg text-green-700";
+                fBox.classList.add('bg-green-50', 'border-green-200');
+            } else {
+                fTitle.innerText = "Incorrecto";
+                fTitle.className = "font-bold text-lg text-red-700";
+                fBox.classList.add('bg-red-50', 'border-red-200');
+            }
+            
+            document.getElementById('feedback-body').innerHTML = `<strong>Realimentación:</strong> ${q.feedback}`;
+        }
+
+        function nextStep() {
+            currentIdx++;
+            if (currentIdx < quizData.length) renderQuestion();
+            else showResults();
+        }
+
+        function showResults() {
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+            
+            const percent = Math.round((score / totalPossible) * 100);
+            const circumference = 596;
+            const offset = circumference - (percent / 100) * circumference;
+            
+            // 1. Forzamos un pequeño retraso para que el navegador procese la visibilidad 
+            // del contenedor antes de iniciar la transición del SVG
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    document.getElementById('final-circle').style.strokeDashoffset = offset;
+                }, 50);
+            });
+            
+            // 2. Animación progresiva del contador numérico
+            let count = 0;
+            const timer = setInterval(() => {
+                if (count >= percent) {
+                    document.getElementById('result-percent').innerText = percent;
+                    clearInterval(timer);
+                } else {
+                    count++;
+                    document.getElementById('result-percent').innerText = count;
+                }
+            }, 20);
+
+            document.getElementById('result-score').innerText = `Puntaje Total: ${score} de ${totalPossible} puntos`;
+            const msg = document.getElementById('result-msg');
+            if (percent === 100) msg.innerText = "¡Excelente! Has asimilado de forma impecable el impacto de los factores psicológicos y cognitivos en la seguridad vial.";
+            else if (percent >= 70) msg.innerText = "¡Buen trabajo! Conoces la relación entre la carga cognitiva, el estrés y el diseño preventivo de infraestructura.";
+            else msg.innerText = "Te recomendamos revisar con mayor detalle los fenómenos atencionales y los de habituación al riesgo aplicados al tránsito.";
+        }
+    </script>
+</body>
+</html>

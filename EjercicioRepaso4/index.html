@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repaso: Distracción y Atención en la Vía</title>
+    <title>Repaso: Distracción, Atención y Modelos de Estrés</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -130,8 +130,9 @@
     <div id="main-container">
         
         <div id="screen-start" class="scroll-content flex flex-col items-center justify-center text-center animate__animated animate__fadeIn">
-            <h1 class="text-4xl font-bold text-custom mb-4 leading-tight">Ejercicios de Repaso 4</h1>
-            <p class="mb-10 max-w-2xl text-slate-500 text-lg">Analizaremos cómo el uso de tecnologías y los procesos internos del conductor afectan la detección de riesgos y el procesamiento consciente del entorno vial.</p>
+            <h1 class="text-4xl font-bold text-custom mb-4 leading-tight">Ejercicios de Repaso</h1>
+            <p class="text-2xl mb-4 text-slate-600 font-semibold">Unidad 1: Atención, Factores de Distracción y Modelos de Estrés</p>
+            <p class="mb-10 max-w-2xl text-slate-500 text-lg">Evaluación interactiva para analizar el procesamiento cognitivo, clasificación de distractores viales y los principales modelos conceptuales del estrés adaptados a la conducción.</p>
             <button onclick="startQuiz()" class="btn-action text-xl shadow-lg">INICIAR REPASO</button>
         </div>
 
@@ -205,7 +206,7 @@
                     {t: "c) Es menos riesgoso que hablar con copiloto.", c: false},
                     {t: "d) Puede controlarse fácilmente con experiencia.", c: false}
                 ],
-                feedback: "El uso del celular genera distracción visual y cognitiva, reduciendo la capacidad de procesar el entorno y anticipar riesgos. Esto incrementa la probabilidad de no detectar actores vulnerables en la vía."
+                feedback: "El uso del celular genera distracción visual and cognitiva, reduciendo la capacidad de procesar el entorno y anticipar riesgos. Esto incrementa la probabilidad de no detectar actores vulnerables en la vía."
             },
             {
                 type: "drag",
@@ -230,12 +231,48 @@
                     {t: "d) Delegar la interpretación de alertas al conductor sin priorización de la información.", c: false}
                 ],
                 feedback: "Un diseño efectivo reduce la carga cognitiva y evita la sobrestimulación. Priorizar alertas críticas y organizar la información facilita la atención y mejora la toma de decisiones en la conducción."
+            },
+            {
+                type: "ms",
+                instruction: "Seleccione la respuesta correcta",
+                case: "Caso: Un conductor novato se enfrenta a un cruce mal señalizado y se siente abrumado, cometiendo un error.",
+                question: "4. Según el modelo de Karasek, el estrés es mayor cuando:",
+                options: [
+                    {t: "a) Las demandas son bajas y los recursos altos.", c: false},
+                    {t: "b) Las demandas son altas y los recursos bajos.", c: true},
+                    {t: "c) Las demandas son moderadas y los recursos equilibrados.", c: false},
+                    {t: "d) Los recursos son altos independientemente de la demanda.", c: false}
+                ],
+                feedback: "El estrés aumenta cuando las exigencias superan los recursos disponibles. En las vías, situaciones complejas combinadas con poca experiencia o control elevan la carga cognitiva y el riesgo de errores."
+            },
+            {
+                type: "ms",
+                instruction: "Seleccione la respuesta correcta",
+                case: "Caso: Un conductor novato se enfrenta a un cruce mal señalizado y se siente abrumado, cometiendo un error.",
+                question: "5. ¿Cómo explica el modelo transaccional de Lazarus y Folkman esta situación?",
+                options: [
+                    {t: "a) El conductor evaluó que las demandas superaban sus recursos para afrontarlas, lo que generó estrés y error.", c: true},
+                    {t: "b) El error se produjo únicamente por la falta de señalización en la vía.", c: false},
+                    {t: "c) El conductor actuó de manera automática sin influencia de la percepción.", c: false},
+                    {t: "d) El error depende exclusivamente de la complejidad del entorno vial.", c: false}
+                ],
+                feedback: "El estrés depende de la valoración entre demandas y recursos. Un conductor novato puede percibir la situación como incontrolable, aumentando la carga cognitiva y la probabilidad de cometer errores."
+            },
+            {
+                type: "vf",
+                instruction: "Seleccione Verdadero o Falso",
+                question: "6. El modelo de carga cognitiva clasifica la sobrecarga en intrínseca, extrínseca y germana.",
+                options: [
+                    {t: "Verdadero", c: true},
+                    {t: "Falso", c: false}
+                ],
+                feedback: "Esta clasificación explica cómo la complejidad inherente de la tarea, los distractores externos y el esfuerzo de interpretación afectan el rendimiento en la conducción."
             }
         ];
 
         let currentIdx = 0;
         let score = 0;
-        const totalPoints = 6; // 1 + 4 + 1
+        const totalPoints = 9; // 1 + 4 + 1 + 1 + 1 + 1 = 9 puntos
 
         function startQuiz() {
             document.getElementById('screen-start').classList.add('hidden');
@@ -296,7 +333,6 @@
             const dragBank = document.getElementById('drag-bank');
             dragBank.innerHTML = '';
             
-            // Barajar elementos
             const shuffled = [...q.elements].sort(() => Math.random() - 0.5);
 
             shuffled.forEach((el, i) => {
@@ -416,9 +452,9 @@
 
             document.getElementById('result-score').innerText = `Puntaje Total: ${score} de ${totalPoints} puntos`;
             const msg = document.getElementById('result-msg');
-            if (percent === 100) msg.innerText = "¡Excelente! Comprendes perfectamente cómo los diferentes tipos de distracciones impactan la seguridad vial.";
-            else if (percent >= 70) msg.innerText = "¡Buen trabajo! Identificas correctamente la diferencia entre distractores internos y externos y la importancia de la atención cognitiva.";
-            else msg.innerText = "Te recomendamos repasar la clasificación de las distracciones y el impacto de los sistemas ADAS en la carga mental.";
+            if (percent === 100) msg.innerText = "¡Excelente! Dominas a la perfección tanto la clasificación de los factores de distracción como la aplicación de los modelos de Karasek y Lazarus en entornos reales de tráfico.";
+            else if (percent >= 70) msg.innerText = "¡Buen trabajo! Muestras una sólida comprensión del impacto de la carga cognitiva y el desbalance entre demandas y recursos individuales.";
+            else msg.innerText = "Te recomendamos revisar los componentes de la carga cognitiva y cómo la valoración subjetiva altera la toma de decisiones críticas.";
         }
     </script>
 </body>

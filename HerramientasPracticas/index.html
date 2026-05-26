@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUD Responsive Slider // Cyberpunk Interface</title>
+  <style>
+    /* Reset de estilos y variables de color */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #0a0c10;
+      /* Fondo con cuadrícula tecnológica sutil */
+      background-image: 
+        radial-gradient(circle at 50% 50%, #0f2338 0%, #04060a 100%),
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 25px 25px, 25px 25px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      color: #7dd3fc;
+    }
+
+    /* Contenedor Principal Responsivo */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      max-width: 750px; /* Ancho óptimo de lectura */
+      margin: 0 auto;
+    }
+
+    /* Instrucción Flotante HUD */
+    .floating-instruction {
+      position: absolute;
+      top: -45px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid #00f0ff;
+      color: #00f0ff;
+      padding: 6px 16px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      white-space: nowrap;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+      animation: hudPulse 2.5s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Ventana de Visualización del HUD */
+    .slider-viewport {
+      background: rgba(6, 11, 19, 0.85);
+      border: 1px solid #00f0ff;
+      border-radius: 8px;
+      padding: 35px 30px;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.1), inset 0 0 20px rgba(0, 240, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    /* Cantoneras/Esquinas decorativas estilo interfaz militar/Sci-Fi */
+    .slider-viewport::before, .slider-viewport::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #00f0ff;
+    }
+    .slider-viewport::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+    .slider-viewport::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+
+    /* Track de deslizamiento con solución al bug de encogimiento */
+    .slider-track {
+      display: flex;
+      width: 100%;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Estructura del Slide: Ocupa el 100% del panel de forma rígida */
+    .slide {
+      width: 100%;
+      flex-shrink: 0; /* EVITA QUE LOS ELEMENTOS SE APLASTEN O SE JUNGUEN EN LA PANTALLA */
+      opacity: 0;
+      transform: scale(0.98);
+      transition: opacity 0.5s ease, transform 0.6s ease;
+      visibility: hidden;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1);
+      visibility: visible;
+    }
+
+    /* Párrafo: Alineado a la izquierda y ocupando todo el ancho disponible */
+    .slide p {
+      width: 100%;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+      text-align: left; /* Alineación estricta a la izquierda */
+      text-shadow: 0 0 4px rgba(0, 240, 255, 0.2);
+    }
+
+    /* Formato para el Título Integrado */
+    .slide p span.hud-title {
+      color: #00f0ff;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* Controles de Navegación */
+    .slider-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 25px;
+      margin-top: 25px;
+    }
+
+    /* Botones de acción táctiles/clic */
+    .nav-btn {
+      background: transparent;
+      border: 1px solid #00f0ff;
+      width: 44px;
+      height: 44px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      color: #00f0ff;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 8px rgba(0, 240, 255, 0.1);
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: rgba(0, 240, 255, 0.15);
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.4);
+    }
+
+    .nav-btn:disabled {
+      border-color: #1e293b;
+      color: #334155;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .nav-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+    }
+
+    /* Numerador del HUD */
+    .slider-counter {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #00f0ff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 5px rgba(0, 240, 255, 0.4);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      padding-bottom: 4px;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    /* Animación del pulso de la notificación flotante */
+    @keyframes hudPulse {
+      0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+        opacity: 0.85;
+      }
+      50% {
+        box-shadow: 0 0 22px rgba(0, 240, 255, 0.5);
+        opacity: 1;
+      }
+    }
+
+    /* MEDIA QUERIES: Adaptación total a pantallas móviles */
+    @media (max-width: 600px) {
+      .floating-instruction {
+        font-size: 0.65rem;
+        letter-spacing: 1px;
+        padding: 6px 10px;
+        top: -40px;
+      }
+      .slider-viewport {
+        padding: 25px 20px;
+      }
+      .slide p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+      .nav-btn {
+        width: 38px;
+        height: 38px;
+      }
+      .slider-counter {
+        font-size: 0.75rem;
+        min-width: 110px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="slider-container">
+    
+    <div class="floating-instruction">
+      Haga clic sobre el símbolo (&gt;) para ampliar la información
+    </div>
+
+    <div class="slider-viewport">
+      <div class="slider-track" id="sliderTrack">
+        
+        <div class="slide active">
+          <p>
+            <span class="hud-title">> Ergonomía industrial</span>
+            Evaluación del estrés relacionado con tareas repetitivas o condiciones físicas adversas, como las experimentadas por los conductores de vehículos de carga que enfrentan largas horas de conducción y posiciones corporales incómodas (Wixted, O'Riordan, & O'Riordan, 2018).
+          </p>
+        </div>
+        
+        <div class="slide">
+          <p>
+            <span class="hud-title">> Automatización en la conducción</span>
+            Análisis del estrés en conductores que supervisan sistemas de conducción automatizada, como vehículos con piloto automático. (Greenlee, DeLucia, & Newton, 2019) observaron que estos conductores experimentan ansiedad debido a la incertidumbre sobre cuándo y cómo intervenir en caso de falla del sistema.
+          </p>
+        </div>
+        
+        <div class="slide">
+          <p>
+            <span class="hud-title">> Tareas de inspección visual</span>
+            En la seguridad vial, esto puede aplicarse al estrés experimentado por agentes de tránsito que deben realizar inspecciones visuales rápidas en condiciones adversas, como lluvias intensas o baja visibilidad (Marois y otros, 2019).
+          </p>
+        </div>
+        
+        <div class="slide">
+          <p>
+            <span class="hud-title">> Diseño sonoro en vehículos</span>
+            (Cottrell & Barton, 2012) Exploraron cómo los sonidos artificiales, como alertas acústicas en vehículos eléctricos, pueden influir en el estrés de los peatones y conductores al anticipar movimientos y evitar colisiones. Un ejemplo práctico sería el diseño de sonidos que alerten a ciclistas y peatones en cruces compartidos, reduciendo la incertidumbre y mejorando la interacción vial.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="slider-controls">
+      <button class="nav-btn" id="prevBtn" aria-label="Anterior" disabled>
+        <svg viewBox="0 0 24 24">
+          <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="slider-counter" id="sliderCounter">DATA_01 // 04</div>
+
+      <button class="nav-btn" id="nextBtn" aria-label="Siguiente">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const track = document.getElementById('sliderTrack');
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const counter = document.getElementById('sliderCounter');
+
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+
+    function updateSlider() {
+      // Desplazamiento reactivo basado en porcentajes puros por slide individual (100% por nodo activo)
+      track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+      // Gestión de visibilidad y estados activos
+      slides.forEach((slide, index) => {
+        if (index === currentIndex) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      // Actualizar contador del sistema HUD (Formato 01, 02...)
+      counter.textContent = `DATA_0${currentIndex + 1} // 0${totalSlides}`;
+
+      // Bloqueo estricto de extremos solicitado
+      prevBtn.disabled = (currentIndex === 0);
+      nextBtn.disabled = (currentIndex === totalSlides - 1);
+    }
+
+    // Eventos disparadores
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < totalSlides - 1) {
+        currentIndex++;
+        updateSlider();
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateSlider();
+      }
+    });
+
+    // Soporte opcional para redimensionamientos dinámicos en caliente del navegador
+    window.addEventListener('resize', updateSlider);
+  </script>
+</body>
+</html>

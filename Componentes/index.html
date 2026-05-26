@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Componentes del Modelo y Seguridad Vial</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #F0F5F7;
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center; /* Centrado vertical */
+      min-height: 100vh;
+    }
+
+    .cards-wrapper {
+      max-width: 1000px;
+      width: 100%;
+      display: flex;
+      justify-content: center; /* Centrado horizontal de las tarjetas */
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .card {
+      width: 450px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(39, 114, 143, 0.12);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+      border: 1px solid rgba(39, 114, 143, 0.2);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(39, 114, 143, 0.25);
+      border-color: #1E5870;
+    }
+
+    .header {
+      padding: 1.5rem 1.25rem;
+      color: white;
+      font-weight: 600;
+      font-size: 1.15rem;
+      text-align: center; /* Centrado del texto del encabezado */
+      line-height: 1.4;
+      letter-spacing: -0.2px;
+      border-bottom: 3px solid #1E5870;
+    }
+
+    /* Variaciones basadas en el color #27728F */
+    .header-componentes { background: linear-gradient(135deg, #27728F, #1E5870); }
+    .header-aplicacion { background: linear-gradient(135deg, #3A8BAA, #27728F); }
+
+    .content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.33, 1, 0.68, 1), padding 0.4s ease;
+      background: #ffffff;
+      padding: 0 1.5rem;
+    }
+
+    .content.open {
+      max-height: 800px;
+      padding: 1.5rem;
+    }
+
+    .content p {
+      margin: 0;
+      line-height: 1.6;
+      color: #2C3E50;
+      text-align: center; /* Centrado del texto descriptivo */
+      font-size: 0.95rem;
+    }
+
+    .content ul {
+      list-style-position: inside; /* Mantiene las viñetas alineadas con el texto centrado */
+      text-align: center; /* Centrado de la lista */
+      padding: 0;
+    }
+
+    .content li {
+      margin-bottom: 12px;
+      line-height: 1.6;
+      color: #2C3E50;
+      font-size: 0.95rem;
+    }
+
+    .content li strong {
+      color: #27728F;
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      body {
+        align-items: flex-start; /* Evita problemas de scroll en pantallas pequeñas */
+      }
+      .card {
+        width: 100%;
+        max-width: 500px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+
+      .header {
+        padding: 1.1rem 1rem;
+        font-size: 1rem;
+      }
+
+      .content.open {
+        padding: 1.1rem;
+      }
+
+      .content p, .content li {
+        font-size: 0.875rem;
+      }
+    }
+
+    /* Modo oscuro adaptativo */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #111823;
+      }
+
+      .card {
+        background: #1A2436;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border-color: rgba(39, 114, 143, 0.3);
+      }
+
+      .card:hover {
+        box-shadow: 0 12px 28px rgba(39, 114, 143, 0.4);
+        border-color: #3A8BAA;
+      }
+
+      .content {
+        background: #1A2436;
+      }
+
+      .content p, .content li {
+        color: #E2E8F0;
+      }
+
+      .content li strong {
+        color: #51B0D5;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cards-wrapper">
+    <div class="card" onclick="toggleContent(this)">
+      <div class="header header-componentes">Componentes del modelo</div>
+      <div class="content">
+        <ul>
+          <li><strong>Respuestas fisiológicas:</strong> aumento del ritmo cardíaco, liberación de cortisol.</li>
+          <li>Cambios en la atención y la memoria de trabajo.</li>
+          <li>Alteraciones en la toma de decisiones.</li>
+          <li>Comportamiento adaptativo ante situaciones inesperadas.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" onclick="toggleContent(this)">
+      <div class="header header-aplicacion">Aplicación en seguridad vial</div>
+      <div class="content">
+        <p>Este modelo ayuda a comprender cómo factores como el aumento del ritmo cardíaco o la liberación de cortisol afectan la capacidad del conductor para reaccionar rápidamente ante eventos inesperados, como un vehículo que cambia de carril abruptamente.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleContent(card) {
+      const content = card.querySelector('.content');
+      content.classList.toggle('open');
+    }
+  </script>
+
+</body>
+</html>

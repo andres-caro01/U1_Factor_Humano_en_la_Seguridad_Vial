@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliografía - Psicología del Tráfico y Percepción</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-color: #003366; 
+            --accent-bright: #00ffff; 
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(0, 255, 255, 0.2);
+            --text-main: #ffffff;
+            --text-dim: #99ffff;
+        }
+
+        body {
+            margin: 0; padding: 0; min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: #00050a;
+            color: var(--text-main);
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden; cursor: default;
+        }
+
+        #custom-cursor-tool {
+            position: fixed; pointer-events: none;
+            background: var(--accent-bright); color: #000;
+            padding: 5px 12px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 700;
+            z-index: 9999; display: none;
+            transform: translate(15px, 15px);
+            box-shadow: 0 0 15px var(--accent-bright);
+        }
+
+        .fluid-background {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; background: #000810; filter: blur(80px);
+        }
+        .fluid-layer { position: absolute; border-radius: 50%; opacity: 0.4; animation: fluidMove infinite alternate ease-in-out; }
+        .layer-1 { background: radial-gradient(circle, #004488 0%, transparent 70%); width: 100vw; height: 100vw; top: -30%; left: -10%; animation-duration: 20s; }
+        .layer-2 { background: radial-gradient(circle, #001a33 0%, transparent 70%); width: 80vw; height: 80vw; bottom: -20%; right: -10%; animation-duration: 25s; }
+        @keyframes fluidMove { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(10%, 5%) scale(1.1); } }
+
+        .nav-instruction {
+            width: 90vw; max-width: 1400px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px dashed var(--accent-bright);
+            padding: 15px; border-radius: 12px;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9rem; color: var(--accent-bright);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .main-header { text-align: center; padding: 30px 20px; z-index: 1; }
+        .main-header h1 { font-weight: 300; font-size: 2rem; letter-spacing: 6px; text-transform: uppercase; margin: 0; background: linear-gradient(to right, #fff, var(--accent-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .main-header .line { width: 60px; height: 3px; background: var(--accent-bright); margin: 15px auto; }
+
+        .reference-grid {
+            display: grid; width: 90vw; max-width: 1400px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px; padding-bottom: 80px; z-index: 1;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 25px;
+            display: flex; flex-direction: column;
+            transition: all 0.3s ease;
+            min-height: 190px;
+        }
+        .card:hover { border-color: var(--accent-bright); transform: translateY(-5px); background: rgba(0, 255, 255, 0.05); }
+
+        .author-tag { font-size: 0.7rem; font-weight: 600; color: var(--accent-bright); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+        .title { font-size: 0.95rem; line-height: 1.5; color: var(--text-main); margin-bottom: 15px; }
+
+        .footer-info {
+            font-size: 0.75rem; color: var(--text-dim);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px; margin-top: auto;
+        }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-visit { text-decoration: none; background: var(--accent-bright); color: #000; padding: 6px 12px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+        .btn-copy { background: transparent; border: 1px solid var(--accent-bright); color: var(--accent-bright); padding: 6px 12px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; }
+        .btn-copy:hover { background: var(--accent-bright); color: #000; }
+        
+    </style>
+</head>
+<body>
+
+    <div id="custom-cursor-tool">¡Enlace Copiado!</div>
+
+    <div class="fluid-background">
+        <div class="fluid-layer layer-1"></div>
+        <div class="fluid-layer layer-2"></div>
+    </div>
+
+    <div class="nav-instruction">
+        🚗 <b>Instrucción de Navegación:</b> Explora las referencias sobre percepción visual, carga cognitiva y seguridad vial. Usa los botones de <b>Visitar</b> para redireccionar a los repositorios digitales o <b>Copiar Link</b> para guardar la dirección directamente.
+    </div>
+
+    <header class="main-header">
+        <h1>Bibliografía</h1>
+        <div class="line"></div>
+    </header>
+
+    <main class="reference-grid" id="grid"></main>
+
+    <script>
+        const sources = [
+            { a: "Bartmann, M., Staugton, W., & Storie, V. (1993)", t: "Visual perception errors and road traffic accidents", f: "Journal of Traffic Safety, 12(3), 45-59", u: null },
+            { a: "Bockelmann, W. (1987)", t: "Gesichtsfeld. In Auge — Brille — Auto (2nd ed., pp. 72-82)", f: "Berlín: Heidelberg", u: "https://doi.org/10.1007/978-3-642-93316-5_7" },
+            { a: "Campenhausen, C. (1993)", t: "Perception and Motion: A Study of Sensory Integration", f: "Cambridge University Press", u: null },
+            { a: "Chen, C., et al. (2026)", t: "PODAR: A Collision Risk Model Offering Valid Signals for Vehicular Interactions", f: "Intelligent Transportation Systems Magazine, 18(1), 6-26", u: "https://doi.org/10.1109/MITS.2025.3542816" },
+            { a: "Cohen, D. (1986)", t: "Peripheral vision and traffic safety: A study of visual perception in driving", f: "Traffic Psychology Review, 8(2), 123-136", u: null },
+            { a: "Cohen, R. A. (1993)", t: "The Neuropsychology of Attention", f: "New York: Plenum Press", u: null },
+            { a: "Cottrell, N. D., & Barton, B. K. (2012)", t: "The impact of artificial vehicle sounds for pedestrians on driver stress", f: "Ergonomics, 55(12), 1476–1486", u: null },
+            { a: "Dingus, T. A., & otros. (2016)", t: "Driver crash risk factors and prevalence evaluation using naturalistic driving data", f: "Proceedings of the National Academy of Sciences, 130(10), 2636–2641", u: null },
+            { a: "Elling, L., & otros. (2011)", t: "Acute stress alters auditory selective attention in humans independent of HPA", f: "PLOS ONE, 6(4), 18009", u: null },
+            { a: "Fechner, G. (1860)", t: "Elemente der Psychophysik", f: "Leipzig: Breitkopf & Härtel", u: null },
+            { a: "Fildes, B. N. (1988)", t: "Visual estimation of speed and its relation to road safety", f: "Australian Road Research, 18(3), 155-167", u: null },
+            { a: "Flexman, R. P. (1987)", t: "Training simulators. In E. A. Stark, Handbook of Human Factors", f: "New York: John Wiley & Sons", u: null },
+            { a: "Gerrig, R., & otros. (2005)", t: "Psychology and Life", f: "Australia: Pearson", u: null },
+            { a: "Gibson, J. J. (1950)", t: "The Perception of the Visual World", f: "London: Houghton Mifflin", u: null },
+            { a: "Gramberg-Danielsen, O. (1967)", t: "The functional role of peripheral vision in driving", f: "Vision and Traffic Journal, 7(1), 11-25", u: null },
+            { a: "Greenlee, E. T., DeLucia, P. R., & Newton, D. C. (2019)", t: "Driver vigilance in automated vehicles: Effects of demands on hazard detection performance", f: "Human Factors, 61(3), 474-487", u: null },
+            { a: "Hagendorf, H., et al. (2011)", t: "Wahrnehmung und Aufmerksamkeit. Allgemeine Psychologie für Bachelor", f: "Berlín: Heidelberg", u: "https://doi.org/10.1007/978-3-642-12710-6" },
+            { a: "Häkkinen, S. (1963)", t: "Estimation of distance and velocity in traffic situations", f: "Helsinki: Institute of Occupational Health", u: null },
+            { a: "Hancock, P. A., & Szalma, J. L. (2008)", t: "Performance under Stress: A Cognitive Engineering Approach", f: "CRC Press", u: null },
+            { a: "He, X., Happee, R., & Wang, M. (2023)", t: "A new computational perceived risk model for automated vehicles based on potential collision avoidance difficulty (PCAD)", f: "arXiv preprint", u: "https://doi.org/10.48550/arXiv.2306.08458" },
+            { a: "Helton, W. S., & Warm, J. S. (2008)", t: "Signal detection and vigilance: Effects of stress and workload", f: "Human Factors, 50(5), 923-933", u: null },
+            { a: "Hockey, G. R. (1997)", t: "Compensatory control in the regulation of human performance under stress and high workload", f: "Biological Psychology, 45(1-2), 73-93", u: null },
+            { a: "Karasek, R. A. (1979)", t: "Job demands, job decision latitude, and mental strain: Implications for job redesign", f: "Administrative Science Quarterly, 24(2), 285-308", u: null },
+            { a: "Kayser, H. J., & otros. (1987)", t: "Untersuchungen zu Determinanten der Geschwindigkeitswahl", f: "Bundesanstalt für Straßenwesen. Bergisch Gladbach", u: null },
+            { a: "Klebelsberg, D. (1982)", t: "Verkehrspsychologie", f: "Berlín: Heidelberg", u: "https://doi.org/10.1007/978-3-642-47507-8" },
+            { a: "Klein, G. (1998)", t: "Sources of Power: How People Make Decisions", f: "MIT Press, Cambridge, MA", u: null },
+            { a: "Lazarus, R. S., & Folkman, S. (1984)", t: "Stress, Appraisal, and Coping", f: "New York: Springer", u: null },
+            { a: "Marois, A., et al. (2019)", t: "Safety, stress and work zone complexity: A field study on police officers performing on-foot traffic control", f: "Transportation Research Interdisciplinary Perspectives, 1, 100018", u: null },
+            { a: "Matthews, G. (2001)", t: "Levels of stress and its impact on driving", f: "Journal of Experimental Psychology: Applied, 7(2), 172-185", u: null },
+            { a: "Möhler, W. (1987)", t: "Perceptual limitations in traffic situations", f: "Journal of Safety Research, 18(4), 27-38", u: null },
+            { a: "Newman, E., Risch, E., & Kassam, A. N. (2006)", t: "Ethical issues in trauma-related research: A review", f: "Journal of Empirical Research on Human Research Ethics, 1(3), 29-46", u: null },
+            { a: "OPS. (2024)", t: "Salvar vidas promoviendo un enfoque de sistemas de tránsito seguros en las Américas", f: "OPS/OMS", u: "https://www.paho.org/es/node/98195" },
+            { a: "Parasuraman, R., Hancock, P. A., & Olofinboba, O. (1997)", t: "Alarm effectiveness in driver-centred collision-warning systems", f: "Ergonomics, 40(3), 390–399", u: null },
+            { a: "Prinz, W. (1992)", t: "Theories of perception in human information processing", f: "Perception and Cognition Journal, 89-107", u: null },
+            { a: "Prytz, E. G., & Scerbo, M. W. (2015)", t: "Changes in stress and subjective workload over time following a workload transition", f: "Theoretical Issues in Ergonomics Science, 16(6), 586-605", u: null },
+            { a: "Richter, W. (2016)", t: "Perception and Action in Cognitive Psychology", f: "Springer", u: null },
+            { a: "Rowden, P., & otros. (2011)", t: "The relative impact of work-related stress, life stress and driving environment stress on driving outcomes", f: "Accident Analysis & Prevention, 43(4), 1332-1340", u: null },
+            { a: "Slovic, P. (1987)", t: "Perception of Risk", f: "Science, 280-285", u: "https://doi.org/10.1126/science.3563507" },
+            { a: "Sömen, D., & Brenner-Hartmann, S. (2001)", t: "Traffic safety and perceptual factors", f: "International Journal of Traffic Psychology, 9(3), 210-230", u: null },
+            { a: "Strayer, D. L., & otros. (2015)", t: "Assessing cognitive distraction in the automobile", f: "Human Factors, 57(8), 1300-1324", u: null },
+            { a: "Sweller, J. (1988)", t: "Cognitive load during problem solving: Effects on learning", f: "Cognitive Science, 12(2), 257-285", u: null },
+            { a: "Wickens, C. D., & otros. (1993)", t: "Introduction to Human Factors Engineering", f: "Pearson", u: null },
+            { a: "Wilde, G. J. (1982)", t: "The Theory of Risk Homeostasis: Implications for Safety and Health", f: "Risk Analysis, 2, 209-225", u: "https://doi.org/10.1111/j.1539-6924.1982.tb01384.x" },
+            { a: "Wixted, F., O'Riordan, C., & O'Riordan, L. (2018)", t: "Inhibiting the physiological stress effects of a sustained attention task on shoulder muscle activity", f: "International Journal of Environmental Research and Public Health, 15(1), 115", u: null },
+            { a: "Xu, J., et al. (2024)", t: "Cognitive load and task switching in drivers: Implications for road safety in semi-autonomous vehicles", f: "Transportation Research Part F, 107, 1175–1197", u: "https://doi.org/10.1016/j.trf.2024.11.005" }
+        ];
+
+        const grid = document.getElementById('grid');
+        const tool = document.getElementById('custom-cursor-tool');
+
+        document.addEventListener('mousemove', (e) => {
+            tool.style.left = e.clientX + 'px';
+            tool.style.top = e.clientY + 'px';
+        });
+
+        sources.forEach((s) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            let html = `
+                <div class="author-tag">${s.a}</div>
+                <div class="title">${s.t}</div>
+                <div class="footer-info">${s.f}</div>
+            `;
+
+            if(s.u) {
+                html += `
+                    <div class="btn-group">
+                        <a href="${s.u}" target="_blank" class="btn-visit">Visitar</a>
+                        <button class="btn-copy" onclick="copyLink('${s.u}')">Copiar Link</button>
+                    </div>
+                `;
+            }
+
+            card.innerHTML = html;
+            grid.appendChild(card);
+        });
+
+        function copyLink(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                tool.style.display = 'block';
+                setTimeout(() => { tool.style.display = 'none'; }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrusel de Adaptación Sensorial</title>
+    <style>
+        :root {
+            --bg-color: #050508;
+            --accent-blue: #00f2fe;
+            --accent-purple: #4facfe;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #aaabae;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* Fondo decorativo sutil */
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.05) 0%, rgba(79, 172, 254, 0.02) 50%, transparent 100%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Contenedor Principal */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 850px;
+            height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        /* Escenario de las Tarjetas */
+        .carousel-stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+        }
+
+        /* Estilos de las Tarjetas de Texto */
+        .text-card {
+            position: absolute;
+            width: 550px;
+            padding: 3.5rem;
+            border-radius: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+                        opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1),
+                        border-color 0.4s ease,
+                        box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+        }
+
+        /* Estado: Activa (Centro) */
+        .text-card.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translate3d(0, 0, 0) scale(1);
+            z-index: 10;
+            border-color: rgba(0, 242, 254, 0.25);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
+                        0 0 40px rgba(0, 242, 254, 0.05),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Estado: Siguiente (Derecha) */
+        .text-card.next {
+            opacity: 0.25;
+            visibility: visible;
+            transform: translate3d(140px, 0, -150px) rotateY(-25deg);
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        /* Estado: Anterior (Izquierda) */
+        .text-card.prev {
+            opacity: 0.25;
+            visibility: visible;
+            transform: translate3d(-140px, 0, -150px) rotateY(25deg);
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        /* Efecto Hover en tarjetas laterales */
+        .text-card.next:hover, .text-card.prev:hover {
+            opacity: 0.5;
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Animación interna del Texto */
+        .text-card .card-number {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            transform: translateZ(30px);
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .text-card h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            transform: translateZ(50px);
+            opacity: 0;
+            transition: opacity 0.4s ease 0.1s, transform 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.1s;
+        }
+
+        .text-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            transform: translateZ(40px);
+            opacity: 0;
+            transition: opacity 0.4s ease 0.2s, transform 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.2s;
+        }
+
+        /* Activación de animación interna */
+        .text-card.active .card-number,
+        .text-card.active h2,
+        .text-card.active p {
+            opacity: 1;
+            transform: translateZ(0);
+        }
+
+        /* Controles Inferiores */
+        .controls-container {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            margin-top: 2rem;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.01);
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+            color: var(--accent-blue);
+        }
+
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-btn.prev-btn:hover svg { transform: translateX(-2px); }
+        .nav-btn.next-btn:hover svg { transform: translateX(2px); }
+
+        .indicators {
+            display: flex;
+            gap: 0.7rem;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .text-card {
+                width: 85%;
+                padding: 2.5rem 2rem;
+            }
+            .text-card h2 { font-size: 1.7rem; }
+            .text-card p { font-size: 1rem; }
+            .text-card.next { transform: translate3d(40px, 0, -120px) rotateY(-20deg); }
+            .text-card.prev { transform: translate3d(-40px, 0, -120px) rotateY(20deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="carousel-container">
+        <div class="carousel-stage">
+            
+            <div class="text-card">
+                <div class="card-number">Factores de Riesgo</div>
+                <h2>Adaptación visual</h2>
+                <p>Cuando un conductor sale de un túnel oscuro y entra a plena luz del día, la intensidad del brillo puede dificultar la visibilidad momentáneamente; tras unos segundos, los ojos se ajustan.</p>
+            </div>
+
+            <div class="text-card">
+                <div class="card-number">Factores de Riesgo</div>
+                <h2>Adaptación auditiva</h2>
+                <p>Un ciclista que transita por una calle ruidosa puede acostumbrarse al sonido constante de motores y bocinas, dejando de reaccionar a algunos de ellos.</p>
+            </div>
+
+            <div class="text-card">
+                <div class="card-number">Factores de Riesgo</div>
+                <h2>Adaptación a la velocidad</h2>
+                <p>En largas distancias y a velocidades constantes, conductores y motociclistas pueden percibir la velocidad como menor de lo que realmente es.</p>
+            </div>
+
+            <div class="text-card">
+                <div class="card-number">Factores de Riesgo</div>
+                <h2>Adaptación olfativa</h2>
+                <p>Si un vehículo emite olores inusuales por una falla, el sistema olfativo se ajusta y el olor parece desaparecer, pudiendo ignorarse problemas de seguridad.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="controls-container">
+        <button class="nav-btn prev-btn" aria-label="Anterior">
+            <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="indicators"></div>
+        <button class="nav-btn next-btn" aria-label="Siguiente">
+            <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.text-card');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            const indicatorsContainer = document.querySelector('.indicators');
+            
+            let currentIndex = 0;
+            const totalCards = cards.length;
+
+            // Crear los indicadores dinámicamente
+            cards.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(index));
+                indicatorsContainer.appendChild(dot);
+            });
+
+            const dots = document.querySelectorAll('.dot');
+
+            function updateCarousel() {
+                cards.forEach((card, index) => {
+                    card.classList.remove('active', 'next', 'prev');
+                    
+                    if (index === currentIndex) {
+                        card.classList.add('active');
+                    } else if (index === (currentIndex + 1) % totalCards) {
+                        card.classList.add('next');
+                    } else if (index === (currentIndex - 1 + totalCards) % totalCards) {
+                        card.classList.add('prev');
+                    }
+                });
+
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === currentIndex);
+                });
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalCards;
+                updateCarousel();
+            }
+
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+                updateCarousel();
+            }
+
+            function goToSlide(index) {
+                currentIndex = index;
+                updateCarousel();
+            }
+
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+
+            document.querySelector('.carousel-stage').addEventListener('click', (e) => {
+                const clickedCard = e.target.closest('.text-card');
+                if (!clickedCard) return;
+                
+                if (clickedCard.classList.contains('next')) nextSlide();
+                if (clickedCard.classList.contains('prev')) prevSlide();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') nextSlide();
+                if (e.key === 'ArrowLeft') prevSlide();
+            });
+
+            updateCarousel();
+        });
+    </script>
+</body>
+</html>

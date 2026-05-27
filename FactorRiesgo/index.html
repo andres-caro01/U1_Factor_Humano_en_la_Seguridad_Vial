@@ -13,6 +13,7 @@
             --card-border: rgba(255, 255, 255, 0.08);
             --text-primary: #ffffff;
             --text-secondary: #aaabae;
+            --instruction-bg: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -32,6 +33,27 @@
             align-items: center;
             overflow: hidden;
             perspective: 1000px;
+            position: relative; /* Importante para el posicionamiento absoluto */
+        }
+
+        /* Instrucción Flotante */
+        .instruction-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--instruction-bg);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            z-index: 20; /* Asegurar que esté sobre todo */
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            animation: fadeIn 1s ease 2s forwards; /* Aparecer después de 2 segundos */
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
 
         /* Fondo decorativo sutil */
@@ -240,10 +262,8 @@
         }
 
         @media (max-width: 768px) {
-            .text-card {
-                width: 85%;
-                padding: 2.5rem 2rem;
-            }
+            .instruction-overlay { font-size: 0.8rem; padding: 8px 16px; top: 10px; right: 10px; }
+            .text-card { width: 85%; padding: 2.5rem 2rem; }
             .text-card h2 { font-size: 1.7rem; }
             .text-card p { font-size: 1rem; }
             .text-card.next { transform: translate3d(40px, 0, -120px) rotateY(-20deg); }
@@ -255,16 +275,18 @@
 
     <div class="bg-glow"></div>
 
+    <div class="instruction-overlay">Haga clic sobre las flechas (>) para navegar.</div>
+
     <div class="carousel-container">
         <div class="carousel-stage">
             
-            <div class="text-card">
+            <div class="text-card active">
                 <div class="card-number">Factores de Riesgo</div>
                 <h2>Adaptación visual</h2>
                 <p>Cuando un conductor sale de un túnel oscuro y entra a plena luz del día, la intensidad del brillo puede dificultar la visibilidad momentáneamente; tras unos segundos, los ojos se ajustan.</p>
             </div>
 
-            <div class="text-card">
+            <div class="text-card next">
                 <div class="card-number">Factores de Riesgo</div>
                 <h2>Adaptación auditiva</h2>
                 <p>Un ciclista que transita por una calle ruidosa puede acostumbrarse al sonido constante de motores y bocinas, dejando de reaccionar a algunos de ellos.</p>
@@ -276,7 +298,7 @@
                 <p>En largas distancias y a velocidades constantes, conductores y motociclistas pueden percibir la velocidad como menor de lo que realmente es.</p>
             </div>
 
-            <div class="text-card">
+            <div class="text-card prev">
                 <div class="card-number">Factores de Riesgo</div>
                 <h2>Adaptación olfativa</h2>
                 <p>Si un vehículo emite olores inusuales por una falla, el sistema olfativo se ajusta y el olor parece desaparecer, pudiendo ignorarse problemas de seguridad.</p>

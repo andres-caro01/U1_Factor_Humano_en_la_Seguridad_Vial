@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjetas Interactivas - Ergonomía Vial</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #e6edf3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            text-align: center;
+        }
+
+        .instruction {
+            font-size: 1.15rem;
+            color: #58a6ff;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            animation: pulse 2s infinite ease-in-out;
+            display: inline-block;
+            border-bottom: 2px solid rgba(88, 166, 255, 0.2);
+            padding-bottom: 8px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); text-shadow: 0 0 10px rgba(88, 166, 255, 0.5); }
+            100% { opacity: 0.7; transform: scale(1); }
+        }
+
+        /* Distribución 2x2 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tarjeta Estilo Glassmorphism con fondo abstracto integrado */
+        .card {
+            background: rgba(22, 27, 34, 0.7);
+            border: 1px solid rgba(48, 54, 65, 0.8);
+            border-radius: 16px;
+            min-height: 220px;
+            padding: 30px;
+            text-align: left;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Fondos vectoriales sutiles simulando la temática */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.08;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.6s ease;
+            z-index: 1;
+        }
+
+        .card-1::before { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><polygon points="50,15 90,85 10,85" fill="%2358a6ff"/><circle cx="50" cy="55" r="15" fill="none" stroke="%2358a6ff" stroke-width="5"/></svg>'); }
+        .card-2::before { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="%2358a6ff" stroke-width="2"/><path d="M20 50 H80 M50 20 V80" stroke="%2358a6ff" stroke-width="2"/></svg>'); }
+        .card-3::before { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><line x1="10" y1="10" x2="90" y2="90" stroke="%2358a6ff" stroke-width="2"/><line x1="90" y1="10" x2="10" y2="90" stroke="%2358a6ff" stroke-width="2"/><rect x="25" y="25" width="50" height="50" fill="none" stroke="%2358a6ff" stroke-width="2"/></svg>'); }
+        .card-4::before { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M10 50 Q 30 20, 50 50 T 90 50" fill="none" stroke="%2358a6ff" stroke-width="3"/><path d="M10 70 Q 30 40, 50 70 T 90 70" fill="none" stroke="%2358a6ff" stroke-width="15" stroke-dasharray="5 5"/></svg>'); }
+
+        /* Barra de acento lateral azul */
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #1f6feb;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #388bfd;
+            box-shadow: 0 12px 40px rgba(56, 139, 253, 0.15);
+            background: rgba(22, 27, 34, 0.9);
+        }
+
+        .card:hover::before { transform: scale(1.1); }
+        .card:hover::after { width: 8px; background: #58a6ff; }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card h2 {
+            font-size: 1.35rem;
+            color: #f0f6fc;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #8b949e;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .more-badge {
+            align-self: flex-end;
+            font-size: 0.8rem;
+            color: #58a6ff;
+            background: rgba(56, 139, 253, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: 500;
+            transition: background 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card:hover .more-badge {
+            background: rgba(56, 139, 253, 0.25);
+            color: #f0f6fc;
+        }
+
+        /* Ventana Emergente (Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(1, 4, 9, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 650px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            position: relative;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f85149;
+            color: #ffffff;
+            border-color: #f85149;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: #f0f6fc;
+            margin-bottom: 20px;
+            border-left: 5px solid #58a6ff;
+            padding-left: 15px;
+            line-height: 1.2;
+        }
+
+        .modal-body {
+            font-size: 1.1rem;
+            color: #c9d1d9;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="instruction">Haga clic sobre las tarjetas para ampliar la información</div>
+
+        <div class="grid">
+            
+            <div class="card card-1" onclick="openModal(1)">
+                <div class="card-content">
+                    <h2>Señalización clara y predecible</h2>
+                    <p>Reducir la ambigüedad en las señales es fundamental. Por ejemplo, utilizar colores brillantes y formas intuitivas (triángulos para advertencias, círculos para prohibiciones) ayuda a que los conductores procesen la información rápidamente, incluso bajo presión.</p>
+                </div>
+                <div class="more-badge">Ver detalles</div>
+            </div>
+
+            <div class="card card-2" onclick="openModal(2)">
+                <div class="card-content">
+                    <h2>Diseño de interfaces en vehículos</h2>
+                    <p>Los paneles de instrumentos deben ser claros y evitar sobrecargar al conductor con información innecesaria. Por ejemplo, integrar sistemas de navegación que den indicaciones simples y directas minimiza la carga cognitiva.</p>
+                </div>
+                <div class="more-badge">Ver detalles</div>
+            </div>
+
+            <div class="card card-3" onclick="openModal(3)">
+                <div class="card-content">
+                    <h2>Reducción del desorden visual en la vía</h2>
+                    <p>En cruces o intersecciones complejas, priorizar las señales más relevantes y eliminar aquellas que no aportan información crítica puede evitar distracciones y reducir errores.</p>
+                </div>
+                <div class="more-badge">Ver detalles</div>
+            </div>
+
+            <div class="card card-4" onclick="openModal(4)">
+                <div class="card-content">
+                    <h2>Zonas de desaceleración</h2>
+                    <p>Implementar carriles de desaceleración en peajes o cruces escolares ayuda a los conductores a reducir la velocidad de forma controlada, lo que disminuye la probabilidad de accidentes.</p>
+                </div>
+                <div class="more-badge">Ver detalles</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">&times;</button>
+            <h2 class="modal-title" id="modalTitle">Título</h2>
+            <div class="modal-body" id="modalBody">Contenido</div>
+        </div>
+    </div>
+
+    <script>
+        // Mapeo exacto de los datos integrados
+        const data = {
+            1: {
+                title: "Señalización clara y predecible",
+                text: "Reducir la ambigüedad en las señales es fundamental. Por ejemplo, utilizar colores brillantes y formas intuitivas (triángulos para advertencias, círculos para prohibiciones) ayuda a que los conductores procesen la información rápidamente, incluso bajo presión."
+            },
+            2: {
+                title: "Diseño de interfaces en vehículos",
+                text: "Los paneles de instrumentos deben ser claros y evitar sobrecargar al conductor con información innecesaria. Por ejemplo, integrar sistemas de navegación que den indicaciones simples y directas minimiza la carga cognitiva."
+            },
+            3: {
+                title: "Reducción del desorden visual en la vía",
+                text: "En cruces o intersecciones complejas, priorizar las señales más relevantes y eliminar aquellas que no aportan información crítica puede evitar distracciones y reducir errores."
+            },
+            4: {
+                title: "Zonas de desaceleración",
+                text: "Implementar carriles de desaceleración en peajes o cruces escolares ayuda a los conductores a reducir la velocidad de forma controlada, lo que disminuye la probabilidad de accidentes."
+            }
+        };
+
+        function openModal(id) {
+            document.getElementById('modalTitle').innerText = data[id].title;
+            document.getElementById('modalBody').innerText = data[id].text;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = ''; 
+        }
+
+        // Accesibilidad: Cerrar también presionando Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

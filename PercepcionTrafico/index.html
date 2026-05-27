@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capacidades Aptitudinales en el Tráfico</title>
+    <style>
+        :root {
+            --bg-main: #131416;
+            --bg-panel: #1a1c1e;
+            --accent: #00ffaa;
+            --accent-dim: rgba(0, 255, 170, 0.1);
+            --text-title: #ffffff;
+            --text-body: #e2e8f0;
+            --text-muted: #71717a;
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-body);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        /* Layout Principal Asimétrico */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            width: 100%;
+            max-width: 1200px;
+            height: 680px;
+            background: var(--bg-panel);
+            border-radius: 32px;
+            border: 1px solid var(--border);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Líneas de cuadrícula decorativas de fondo táctico */
+        .dashboard::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* PANEL IZQUIERDO: Selector Holográfico */
+        .sidebar {
+            background: rgba(20, 21, 23, 0.8);
+            border-right: 1px solid var(--border);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand h1 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .brand p {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-title);
+        }
+
+        /* Etiqueta de Instrucción solicitada */
+        .instruction-tag {
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 170, 0.2);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: auto 0;
+        }
+
+        .nav-item {
+            background: transparent;
+            border: 1px solid transparent;
+            padding: 1.2rem;
+            border-radius: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-item .index {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.03);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.4s;
+        }
+
+        .nav-item .label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: color 0.4s;
+        }
+
+        /* Estados de navegación activa */
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .nav-item.active .index {
+            background: var(--accent);
+            color: var(--bg-main);
+            font-weight: bold;
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .nav-item.active .label {
+            color: var(--text-title);
+        }
+
+        /* Contador Global Inferior */
+        .footer-status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        /* PANEL DERECHO: Visualizador Dinámico de Contenido */
+        .content-viewer {
+            position: relative;
+            padding: 3.5rem;
+            overflow-y: auto;
+            z-index: 1;
+            scroll-behavior: smooth;
+        }
+
+        /* Barra de scroll personalizada */
+        .content-viewer::-webkit-scrollbar {
+            width: 6px;
+        }
+        .content-viewer::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .section-pane {
+            display: none;
+            animation: contentReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .section-pane.active {
+            display: block;
+        }
+
+        @keyframes contentReveal {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Estilización de Bloques de Texto */
+        .pane-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+
+        .pane-header .desc-principal {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 720px;
+        }
+
+        /* Grid de Sub-ítems internos */
+        .subitems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border);
+            padding: 1.75rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .item-card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-title);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .item-card h3::before {
+            content: '▪';
+            color: var(--accent);
+        }
+
+        .item-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-body);
+        }
+
+        /* Controles de navegación rápida de teclado flotante */
+        .keyboard-hint {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 2rem;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.2);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            pointer-events: none;
+            border: 1px solid var(--border);
+        }
+
+        /* Adaptabilidad Móvil */
+        @media (max-width: 900px) {
+            body {
+                padding: 1rem;
+                overflow: auto;
+            }
+            .dashboard {
+                grid-template-columns: 1fr;
+                height: auto;
+                border-radius: 24px;
+            }
+            .sidebar {
+                padding: 1.5rem;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .instruction-tag {
+                margin-top: 1rem;
+                margin-bottom: 0;
+                text-align: center;
+            }
+            .nav-menu {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+                margin: 1rem 0;
+                gap: 0.5rem;
+            }
+            .nav-item {
+                flex-shrink: 0;
+                padding: 0.8rem 1rem;
+            }
+            .content-viewer {
+                padding: 2rem 1.5rem;
+            }
+            .pane-header h2 {
+                font-size: 1.8rem;
+            }
+            .keyboard-hint {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="dashboard">
+        
+        <section class="sidebar">
+            <div class="instruction-tag">
+                Haga cloc sobre los botones para ampliar la información.
+            </div>
+
+            <nav class="nav-menu" role="tablist">
+                <button class="nav-item active" data-target="pane-1" role="tab" aria-selected="true">
+                    <span class="index">01</span>
+                    <span class="label">Percepción Visual</span>
+                </button>
+                <button class="nav-item" data-target="pane-2" role="tab" aria-selected="false">
+                    <span class="index">02</span>
+                    <span class="label">Atención</span>
+                </button>
+                <button class="nav-item" data-target="pane-3" role="tab" aria-selected="false">
+                    <span class="index">03</span>
+                    <span class="label">Reacción</span>
+                </button>
+                <button class="nav-item" data-target="pane-4" role="tab" aria-selected="false">
+                    <span class="index">04</span>
+                    <span class="label">Resistencia</span>
+                </button>
+            </nav>
+
+        </section>
+
+        <section class="content-viewer">
+            
+            <div class="section-pane active" id="pane-1">
+                <div class="pane-header">
+                    <h2>Capacidad de percepción visual</h2>
+                    <p class="desc-principal">Habilidad para procesar eficazmente los estímulos visuales en el entorno de tráfico, esencial para identificar señales y obstáculos.</p>
+                </div>
+                <div class="subitems-grid">
+                    <div class="item-card">
+                        <h3>Velocidad de percepción</h3>
+                        <p>Rapidez con la que se procesa la información visual, fundamental para reaccionar con rapidez ante eventos en el tráfico.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Cantidad de información percibida</h3>
+                        <p>Volumen de estímulos que el sistema visual puede captar en un momento dado.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Campo de percepción (campo visual)</h3>
+                        <p>Amplitud del área visual en la que el individuo puede detectar estímulos, abarcando visión periférica y central.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Percepción selective ante estímulos distractores</h3>
+                        <p>Capacidad de enfocarse en información relevante, ignorando distracciones en el entorno.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-pane" id="pane-2">
+                <div class="pane-header">
+                    <h2>Atención y concentración</h2>
+                    <p class="desc-principal">nivel de enfoque y sostenibilidad mental requerido para participar activamente en el tráfico y evitar distracciones.</p>
+                </div>
+                <div class="subitems-grid">
+                    <div class="item-card">
+                        <h3>Captación activa vs. pasiva de información</h3>
+                        <p>diferencia entre percibir activamente los estímulos en el tráfico o hacerlo de manera involuntaria.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Susceptibilidad a distracciones por elementos irrelevantes</h3>
+                        <p>grado de facilidad con que el individuo se desvía ante estímulos que no son necesarios para la conducción.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Evolución de la concentración (vigilancia/fatiga)</h3>
+                        <p>cambios en el nivel de atención que pueden afectar la seguridad, especialmente en trayectos largos.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Distracción por procesos internos (excitación, ansiedad)</h3>
+                        <p>influencia de factores emocionales o mentales que pueden desviar la atención del tráfico.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-pane" id="pane-3">
+                <div class="pane-header">
+                    <h2>Capacidad de reacción</h2>
+                    <p class="desc-principal">habilidad para responder rápida y adecuadamente ante los estímulos y situaciones en el tráfico.</p>
+                </div>
+                <div class="subitems-grid">
+                    <div class="item-card">
+                        <h3>Velocidad de reacción</h3>
+                        <p>tiempo que toma reaccionar a un estímulo, como frenar ante un obstáculo inesperado.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Control de la reacción</h3>
+                        <p>capacidad para modular la respuesta en función de la situación, evitando reacciones impulsivas o exageradas.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Comportamiento de reacción simple vs. complejo</h3>
+                        <p>diferenciación entre respuestas sencillas, como frenar, y respuestas complejas que requieren varios pasos, como esquivar y frenar a la vez.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-pane" id="pane-4">
+                <div class="pane-header">
+                    <h2>Resistencia</h2>
+                    <p class="desc-principal">capacidad de mantener el rendimiento adecuado bajo diferentes condiciones en el tráfico.</p>
+                </div>
+                <div class="subitems-grid">
+                    <div class="item-card">
+                        <h3>Desempeño bajo diferentes demandas</h3>
+                        <p>eficiencia para adaptarse a distintos tipos de presión o carga mental en el tráfico.</p>
+                    </div>
+                    <div class="item-card">
+                        <h3>Desempeño durante pruebas prolongadas</h3>
+                        <p>capacidad para mantener la atención y las habilidades en trayectos largos o durante tareas que requieren esfuerzos sostenidos.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="keyboard-hint">Use ↑ ↓ o las teclas numéricas para navegar</div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navItems = document.querySelectorAll('.nav-item');
+            const panes = document.querySelectorAll('.section-pane');
+            let activeIndex = 0;
+
+            function switchTab(index) {
+                if(index < 0 || index >= navItems.length) return;
+                
+                navItems.forEach(item => item.classList.remove('active'));
+                navItems[index].classList.add('active');
+                
+                const targetId = navItems[index].getAttribute('data-target');
+                panes.forEach(pane => {
+                    pane.classList.remove('active');
+                    if(pane.id === targetId) {
+                        pane.classList.add('active');
+                    }
+                });
+
+                activeIndex = index;
+            }
+
+            navItems.forEach((item, index) => {
+                item.addEventListener('click', () => switchTab(index));
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    switchTab((activeIndex + 1) % navItems.length);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    switchTab((activeIndex - 1 + navItems.length) % navItems.length);
+                } else if (['1', '2', '3', '4'].includes(e.key)) {
+                    switchTab(parseInt(e.key) - 1);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

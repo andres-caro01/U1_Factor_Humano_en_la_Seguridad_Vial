@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Velocímetro Animación Continua</title>
+
+    <style>
+        :root {
+            /* Ángulos de referencia */
+            --angle-muy-triste: -72deg;
+            --angle-triste: -36deg;
+            --angle-neutral: 0deg;
+            --angle-feliz: 36deg;
+            --angle-muy-feliz: 72deg;
+
+            /* Límites físicos */
+            --limit-rojo: -90deg;
+            --limit-verde: 90deg;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        /* ---------------- CONTENEDOR ---------------- */
+
+        .gauge-container {
+            position: relative;
+            width: 500px;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        /* ---------------- FONDO ---------------- */
+
+        .gauge-body {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 200%;
+            border-radius: 50%;
+
+            background: conic-gradient(
+                from 270deg,
+                #ff2a1a 0deg 36deg,
+                #ff7300 36deg 72deg,
+                #ffeb14 72deg 108deg,
+                #85e642 108deg 144deg,
+                #00cc44 144deg 180deg,
+                transparent 180deg
+            );
+
+            z-index: 1;
+        }
+
+        /* ---------------- SOMBRAS Y NÚCLEO ---------------- */
+
+        .gauge-center-shadow {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+
+            width: 220px;
+            height: 110px;
+
+            background: rgba(0,0,0,0.35);
+            border-radius: 110px 110px 0 0;
+
+            z-index: 2;
+        }
+
+        .gauge-core {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+
+            width: 120px;
+            height: 60px;
+
+            background: #222;
+            border-radius: 60px 60px 0 0;
+
+            z-index: 12;
+        }
+
+        /* ---------------- AGUJA ---------------- */
+
+        .needle-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+
+            width: 0;
+            height: 0;
+
+            z-index: 5;
+
+            /* Animación continua */
+            animation: gaugeSweep 2.2s linear infinite alternate;
+        }
+
+        .needle {
+            position: absolute;
+            bottom: -15px;
+            left: -20px;
+
+            width: 220px;
+            height: 30px;
+
+            background: #003366;
+
+            border-radius: 50% 100% 100% 50% / 50% 50% 50% 50%;
+
+            transform-origin: 20px 15px;
+
+            box-shadow: 0 4px 8px rgba(0,0,0,0.35);
+        }
+
+        /* Movimiento continuo de izquierda a derecha */
+        @keyframes gaugeSweep {
+            from {
+                transform: rotate(var(--limit-rojo));
+            }
+
+            to {
+                transform: rotate(var(--limit-verde));
+            }
+        }
+
+        /* ---------------- CARITAS ---------------- */
+
+        .face {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            z-index: 6;
+        }
+
+        .face-1 {
+            bottom: 35px;
+            left: 55px;
+            transform: rotate(-60deg);
+        }
+
+        .face-2 {
+            bottom: 115px;
+            left: 120px;
+            transform: rotate(-30deg);
+        }
+
+        .face-3 {
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .face-4 {
+            bottom: 115px;
+            right: 120px;
+            transform: rotate(30deg);
+        }
+
+        .face-5 {
+            bottom: 35px;
+            right: 55px;
+            transform: rotate(60deg);
+        }
+
+        .eyes {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+
+        .eye {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        /* ---------------- CARITA ROJA ---------------- */
+
+        .dark-feature .eye {
+            background: #800f07;
+        }
+
+        .dark-feature .mouth {
+            width: 20px;
+            height: 10px;
+
+            border: 4px solid #800f07;
+            border-bottom: none;
+
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* ---------------- CARITA NARANJA ---------------- */
+
+        .orange-feature .eye {
+            background: #944200;
+        }
+
+        .orange-feature .mouth {
+            width: 20px;
+            height: 10px;
+
+            border: 4px solid #944200;
+            border-bottom: none;
+
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* ---------------- CARITA AMARILLA ---------------- */
+
+        .yellow-feature .eye {
+            background: #8a7c00;
+        }
+
+        .yellow-feature .mouth {
+            width: 20px;
+            height: 4px;
+
+            background: #8a7c00;
+
+            border-radius: 2px;
+        }
+
+        /* ---------------- CARITA VERDE CLARO ---------------- */
+
+        .light-green-feature .eye {
+            background: #3b750e;
+        }
+
+        .light-green-feature .mouth {
+            width: 20px;
+            height: 10px;
+
+            border: 4px solid #3b750e;
+            border-top: none;
+
+            border-radius: 0 0 20px 20px;
+        }
+
+        /* ---------------- CARITA VERDE ---------------- */
+
+        .green-feature .eye {
+            background: #00521b;
+        }
+
+        .green-feature .mouth {
+            width: 20px;
+            height: 10px;
+
+            border: 4px solid #00521b;
+            border-top: none;
+
+            border-radius: 0 0 20px 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="gauge-container">
+
+        <!-- Fondo -->
+        <div class="gauge-body"></div>
+
+        <!-- Sombra -->
+        <div class="gauge-center-shadow"></div>
+
+        <!-- Aguja -->
+        <div class="needle-wrapper">
+            <div class="needle"></div>
+        </div>
+
+        <!-- Núcleo -->
+        <div class="gauge-core"></div>
+
+        <!-- Caritas -->
+
+        <div class="face face-1 dark-feature">
+            <div class="eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="mouth"></div>
+        </div>
+
+        <div class="face face-2 orange-feature">
+            <div class="eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="mouth"></div>
+        </div>
+
+        <div class="face face-3 yellow-feature">
+            <div class="eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="mouth"></div>
+        </div>
+
+        <div class="face face-4 light-green-feature">
+            <div class="eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="mouth"></div>
+        </div>
+
+        <div class="face face-5 green-feature">
+            <div class="eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="mouth"></div>
+        </div>
+
+    </div>
+
+</body>
+</html>

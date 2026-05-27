@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indicadores de Siniestros Viales 2021</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #e5eff2;
+            --text-main: #000000;
+            --text-muted: #1a1a1a;
+            --accent-blue: #0066cc;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 80px 20px 20px 20px; /* Margen superior extra para que la instrucción no tape el contenido en móviles */
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Instrucción Flotante en la Zona Superior Derecha */
+        .floating-instruction {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ffffff;
+            color: var(--text-muted);
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 102, 204, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            pointer-events: none; /* Evita que estorbe si se intenta hacer clic a través de ella */
+            animation: fadeIn 1s ease forwards;
+        }
+
+        /* Icono indicador animado (Punto parpadeante) */
+        .instruction-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-blue);
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.8s infinite ease-in-out;
+        }
+
+        /* Distribución estricta 2x2 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        /* Tarjetas interactiva con cursor pointer */
+        .card {
+            background-color: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 4px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Clase que activa la aparición visual de la tarjeta */
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Interactividad Hover en la tarjeta */
+        .card:hover {
+            box-shadow: 0 10px 20px rgba(0, 102, 204, 0.1);
+        }
+
+        /* Contenedor del Número Animado */
+        .number-container {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease;
+        }
+
+        /* Animación interactiva en el número al pasar el cursor o hacer clic */
+        .card:hover .number-container,
+        .card:active .number-container {
+            transform: scale(1.08);
+            color: var(--accent-blue);
+        }
+
+        .title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 15px 0;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Keyframes de las animaciones auxiliares */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.4); }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 0 6px rgba(0, 102, 204, 0); }
+            100% { transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 0 0 rgba(0, 102, 204, 0); }
+        }
+
+        /* Responsivo para móviles */
+        @media (max-width: 768px) {
+            .floating-instruction {
+                position: absolute;
+                top: 15px;
+                right: 50%;
+                transform: translateX(50%); /* Centrado arriba en pantallas pequeñas */
+                animation: fadeIn 1s ease forwards;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translate(50%, -10px); }
+                to { opacity: 1; transform: translate(50%, 0); }
+            }
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            .number-container {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-instruction">
+        <span class="instruction-dot"></span>
+        Haga clic sobre las tarjetas para interactuar
+    </div>
+
+    <div class="grid-container">
+        <div class="card">
+            <div class="number-container" data-target="145090" data-type="int">0</div>
+            <h3 class="title">Fallecidos en 2021</h3>
+            <p class="description">Muertes por siniestros de tránsito en las Américas</p>
+        </div>
+
+        <div class="card">
+            <div class="number-container" data-target="12" data-type="percent">0%</div>
+            <h3 class="title">Del total mundial</h3>
+            <p class="description">Proporción de muertes viales de la región respecto al mundo</p>
+        </div>
+
+        <div class="card">
+            <div class="number-container" data-target="4.1" data-type="float">0,0M</div>
+            <h3 class="title">Lesiones no fatales</h3>
+            <p class="description">Personas con lesiones en 2021, de las cuales 638.620 fueron severas</p>
+        </div>
+
+        <div class="card">
+            <div class="number-container" data-target="86" data-type="int">0</div>
+            <h3 class="title">Lesionados por fallecido</h3>
+            <p class="description">Indicador de Colombia: uno de los más altos de la región</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.card');
+
+            // Función encargada de calcular e incrementar el número desde 0
+            const animateNumber = (el) => {
+                if (el.dataset.animationId) {
+                    cancelAnimationFrame(parseInt(el.dataset.animationId));
+                }
+
+                const target = parseFloat(el.getAttribute('data-target'));
+                const type = el.getAttribute('data-type');
+                const duration = 2000; 
+                const startTime = performance.now();
+
+                const updateNumber = (currentTime) => {
+                    const elapsedTime = currentTime - startTime;
+                    const progress = Math.min(elapsedTime / duration, 1);
+                    
+                    const easeProgress = progress * (2 - progress);
+                    const currentValue = easeProgress * target;
+
+                    if (type === 'int') {
+                        el.textContent = Math.floor(currentValue).toLocaleString('es-CO');
+                    } else if (type === 'percent') {
+                        el.textContent = Math.floor(currentValue) + '%';
+                    } else if (type === 'float') {
+                        el.textContent = currentValue.toFixed(1).replace('.', ',') + 'M';
+                    }
+
+                    if (progress < 1) {
+                        el.dataset.animationId = requestAnimationFrame(updateNumber);
+                    } else {
+                        if (type === 'int') el.textContent = target.toLocaleString('es-CO');
+                        if (type === 'percent') el.textContent = target + '%';
+                        if (type === 'float') el.textContent = target.toString().replace('.', ',') + 'M';
+                        el.removeAttribute('data-animation-id');
+                    }
+                };
+
+                el.dataset.animationId = requestAnimationFrame(updateNumber);
+            };
+
+            const observerOptions = {
+                root: null,
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const card = entry.target;
+                        card.classList.add('visible'); 
+                        
+                        const numEl = card.querySelector('.number-container');
+                        if (numEl && !numEl.classList.contains('animated')) {
+                            numEl.classList.add('animated');
+                            animateNumber(numEl);
+                        }
+                        observer.unobserve(card);
+                    }
+                });
+            }, observerOptions);
+
+            cards.forEach(card => {
+                observer.observe(card);
+
+                card.addEventListener('click', () => {
+                    const numEl = card.querySelector('.number-container');
+                    if (numEl) {
+                        animateNumber(numEl);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

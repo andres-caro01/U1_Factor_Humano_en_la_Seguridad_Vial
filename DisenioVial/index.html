@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarjetas Interactivas - Ergonomía Vial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
@@ -31,7 +35,7 @@
         }
 
         .instruction {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             color: #58a6ff;
             margin-bottom: 40px;
             text-transform: uppercase;
@@ -82,7 +86,7 @@
             backdrop-filter: blur(8px);
         }
 
-        /* Fondos vectoriales sutiles simulando la temática */
+        /* Fondos vectoriales sutiles */
         .card::before {
             content: '';
             position: absolute;
@@ -130,7 +134,7 @@
         }
 
         .card h2 {
-            font-size: 1.35rem;
+            font-size: 1.3rem;
             color: #f0f6fc;
             margin-bottom: 12px;
             font-weight: 600;
@@ -138,18 +142,19 @@
         }
 
         .card p {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #8b949e;
-            line-height: 1.5;
+            line-height: 1.6;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            font-weight: 400;
         }
 
         .more-badge {
             align-self: flex-end;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #58a6ff;
             background: rgba(56, 139, 253, 0.1);
             padding: 4px 12px;
@@ -232,18 +237,20 @@
         }
 
         .modal-title {
-            font-size: 1.8rem;
+            font-size: 1.65rem;
             color: #f0f6fc;
             margin-bottom: 20px;
             border-left: 5px solid #58a6ff;
             padding-left: 15px;
-            line-height: 1.2;
+            line-height: 1.3;
+            font-weight: 600;
         }
 
         .modal-body {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: #c9d1d9;
             line-height: 1.7;
+            font-weight: 400;
         }
     </style>
 </head>
@@ -298,7 +305,6 @@
     </div>
 
     <script>
-        // Mapeo exacto de los datos integrados
         const data = {
             1: {
                 title: "Señalización clara y predecible",
@@ -330,7 +336,6 @@
             document.body.style.overflow = ''; 
         }
 
-        // Accesibilidad: Cerrar también presionando Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModal();

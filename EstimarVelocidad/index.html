@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de Percepción del Movimiento</title>
+    <style>
+        :root {
+            --bg-color: #050508;
+            --card-bg: rgba(15, 23, 42, 0.5);
+            --card-border: rgba(56, 189, 248, 0.2);
+            --accent-cyan: #38bdf8;
+            --accent-blue: #3b82f6;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.1) 0px, transparent 50%);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 800px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            background: linear-gradient(to right, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Contenedor Grid 2x2 Estricto */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* Tarjeta Base - Glassmorphism */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Efecto sutil al pasar el cursor para invitar al clic */
+        .card:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(56, 189, 248, 0.1);
+        }
+
+        .card-content h2 {
+            font-size: 1.3rem;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Indicador de número / estado */
+        .card-content h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+            transition: transform 0.3s ease;
+        }
+
+        .card-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        /* --- CONTENEDORES DE ANIMACIÓN (Área visual interactiva inferior) --- */
+        .animation-zone {
+            height: 60px;
+            margin-top: 1.5rem;
+            position: relative;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 1. Fenómeno Figura-Fondo */
+        .figura-fondo-bg {
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0f172a 10px, #0f172a 20px);
+            position: relative;
+        }
+        .figura-objeto {
+            width: 35px;
+            height: 35px;
+            background: repeating-linear-gradient(45deg, #1e293b, #1e293b 10px, #0f172a 10px, #0f172a 20px);
+            position: absolute;
+            top: 12px;
+            left: 45%;
+            border: 1px solid transparent;
+        }
+        /* Estado Activo 1 */
+        .card.active[data-experiment="1"] .figura-objeto {
+            animation: camuflaje 2s infinite alternate ease-in-out;
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+        @keyframes camuflaje {
+            0% { transform: translateX(-60px); }
+            100% { transform: translateX(60px); }
+        }
+
+        /* 2. Dependencia de la Forma */
+        .forma-container {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        .forma-item {
+            width: 25px;
+            height: 25px;
+            background: var(--accent-blue);
+            opacity: 0.4;
+        }
+        .forma-item.circulo { border-radius: 50%; }
+        /* Estado Activo 2 */
+        .card.active[data-experiment="2"] .forma-item.cuadrado {
+            animation: pulso-forma 1.2s infinite alternate ease-in-out;
+        }
+        .card.active[data-experiment="2"] .forma-item.circulo {
+            animation: pulso-forma 1.2s infinite alternate ease-in-out 0.6s;
+        }
+        @keyframes pulso-forma {
+            0% { transform: scale(1); opacity: 0.3; background: var(--accent-blue); }
+            100% { transform: scale(1.3); opacity: 1; background: var(--accent-cyan); box-shadow: 0 0 15px var(--accent-cyan); }
+        }
+
+        /* 3. Tamaño de la Velocidad */
+        .velocidad-pista {
+            width: 90%;
+            height: 4px;
+            background: #1e293b;
+            border-radius: 2px;
+            position: relative;
+        }
+        .velocidad-nodo {
+            width: 10px;
+            height: 10px;
+            background: #64748b;
+            border-radius: 50%;
+            position: absolute;
+            top: -3px;
+            left: 0;
+        }
+        /* Estado Activo 3 */
+        .card.active[data-experiment="3"] .velocidad-nodo {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: viaje-optimo 1.5s infinite linear;
+        }
+        @keyframes viaje-optimo {
+            0% { left: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 95%; opacity: 0; }
+        }
+
+        /* 4. Contraste e Intensidad */
+        .contraste-split {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+        .zona {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .zona.baja { background: #111827; }
+        .zona.alta { background: #334155; }
+        .barra-movil {
+            width: 6px;
+            height: 30px;
+            position: absolute;
+        }
+        .zona.baja .barra-movil { background: #1f2937; left: 20%; }
+        .zona.alta .barra-movil { background: #f8fafc; right: 20%; box-shadow: 0 0 10px #f8fafc; }
+        /* Estado Activo 4 */
+        .card.active[data-experiment="4"] .zona.baja .barra-movil {
+            animation: mov-lento 3s infinite alternate ease-in-out;
+        }
+        .card.active[data-experiment="4"] .zona.alta .barra-movil {
+            animation: mov-rapido 1s infinite alternate ease-in-out;
+        }
+        @keyframes mov-lento {
+            0% { transform: translateX(0); } 100% { transform: translateX(40px); }
+        }
+        @keyframes mov-rapido {
+            0% { transform: translateX(0); } 100% { transform: translateX(-40px); }
+        }
+
+        /* 5. Continuidad del Movimiento */
+        .detectores-container {
+            display: flex;
+            gap: 8px;
+        }
+        .detector {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #1e293b;
+            transition: all 0.2s ease;
+        }
+        /* Estado Activo 5 */
+        .card.active[data-experiment="5"] .detector {
+            animation: secuencia-onda 1.4s infinite url();
+        }
+        .card.active[data-experiment="5"] .detector:nth-child(1) { animation-delay: 0.1s; }
+        .card.active[data-experiment="5"] .detector:nth-child(2) { animation-delay: 0.3s; }
+        .card.active[data-experiment="5"] .detector:nth-child(3) { animation-delay: 0.5s; }
+        .card.active[data-experiment="5"] .detector:nth-child(4) { animation-delay: 0.7s; }
+        .card.active[data-experiment="5"] .detector:nth-child(5) { animation-delay: 0.9s; }
+        
+        @keyframes secuencia-onda {
+            0%, 100% { background: #1e293b; transform: scale(1); }
+            50% { background: var(--accent-cyan); transform: scale(1.3); box-shadow: 0 0 12px var(--accent-cyan); }
+        }
+
+        /* 6. Efectos Posteriores */
+        .espiral-ilusión {
+            width: 40px;
+            height: 40px;
+            border: 4px dashed #334155;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        /* Estado Activo 6 */
+        .card.active[data-experiment="6"] .espiral-ilusión {
+            border-color: var(--accent-cyan);
+            animation: rotar-carga 1s infinite linear;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        @keyframes rotar-carga {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- ESTADOS DINÁMICOS GENERALES (CLASE ACTIVE) --- */
+        .card.active {
+            border-color: var(--accent-cyan);
+            background: rgba(15, 23, 42, 0.8.5);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.15);
+        }
+
+        .card.active .card-content h2 {
+            color: var(--accent-cyan);
+        }
+
+        .card.active .card-content h2::before {
+            transform: scale(1.5);
+            background-color: #22c55e; /* Verde de activado */
+            box-shadow: 0 0 10px #22c55e;
+        }
+
+        .card.active .card-text {
+            color: var(--text-main);
+            opacity: 1;
+        }
+
+        /* Adaptación Responsiva Inteligente */
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>¿Por qué las personas pueden estimar mal la velocidad?</h1>
+        <p>Haz clic sobre cualquier módulo para activar el detector óptico y simular la experiencia visual en tiempo real.</p>
+    </header>
+
+    <div class="grid-container">
+
+        <div class="card" data-experiment="1">
+            <div class="card-content">
+                <h2>Problema figura-fondo</h2>
+                <p class="card-text">De un fondo estructuralmente igual, una figura (forma) solo puede distinguirse mediante el movimiento.</p>
+            </div>
+            <div class="animation-zone">
+                <div class="figura-fondo-bg">
+                    <div class="figura-objeto"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-experiment="2">
+            <div class="card-content">
+                <h2>Dependencia de la forma</h2>
+                <p class="card-text">La percepción del movimiento, debido a procesos de excitación e inhibición de estímulos luminosos, también depende de la forma de los objetos.</p>
+            </div>
+            <div class="animation-zone">
+                <div class="forma-container">
+                    <div class="forma-item cuadrado"></div>
+                    <div class="forma-item circulo"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-experiment="3">
+            <div class="card-content">
+                <h2>Velocidad del movimiento</h2>
+                <p class="card-text">Nuestro sistema visual cuenta con umbrales estrictos: las velocidades de movimiento extremadamente pequeñas o excesivamente grandes no son percibidas.</p>
+            </div>
+            <div class="animation-zone">
+                <div class="velocidad-pista">
+                    <div class="velocidad-nodo"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-experiment="4">
+            <div class="card-content">
+                <h2>Contraste e Intensidad</h2>
+                <p class="card-text">A mayor contraste, más claro se percibe el movimiento. Si disminuyen el contraste y la intensidad lumínica, la velocidad parece reducirse drásticamente.</p>
+            </div>
+            <div class="animation-zone">
+                <div class="contraste-split">
+                    <div class="zona baja"><span style="position:absolute; font-size:9px; top:2px; color:#4b5563;">Bajo</span><div class="barra-movil"></div></div>
+                    <div class="zona alta"><span style="position:absolute; font-size:9px; top:2px; color:#94a3b8;">Alto</span><div class="barra-movil"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-experiment="5">
+            <div class="card-content">
+                <h2>Continuidad del movimiento</h2>
+                <p class="card-text">Se logra combinando señales de múltiples detectores biológicos en la retina. Tanto flujos continuos como discontinuos activan la percepción final.</p>
+            </div>
+            <div class="animation-zone">
+                <div class="detectores-container">
+                    <div class="detector"></div>
+                    <div class="detector"></div>
+                    <div class="detector"></div>
+                    <div class="detector"></div>
+                    <div class="detector"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" data-experiment="6">
+            <div class="card-content">
+                <h2>Efectos posteriores al movimiento</h2>
+                <p class="card-text">Tras la adaptación prolongada a estímulos con dirección constante y su posterior eliminación, se producen efectos ópticos residuales directos en la retina.</p>
+            </div>
+            <div class="animation-zone">
+                <div class="espiral-ilusión"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Lógica de interacción limpia mediante eventos Click
+        const cards = document.querySelectorAll('.card');
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Si la tarjeta ya está activa, la desactivamos
+                if(card.classList.contains('active')) {
+                    card.classList.remove('active');
+                } else {
+                    // Quitamos la activación de cualquier otra para concentrar la atención
+                    cards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
